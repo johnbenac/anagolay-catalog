@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "kind": "ourbox-application-catalog",
+  "catalog_id": "anagolay",
+  "catalog_name": "Anagolay Catalog",
+  "catalog_description": "Application catalog for the Macula IPFS-backed media hosting suite by Anagolay.",
+  "default_app_ids": [
+    "macula"
+  ],
+  "apps": [
+    {
+      "id": "macula",
+      "app_uid": "anagolay/macula",
+      "display_name": "Macula",
+      "description": "IPFS-backed media hosting with image transforms and a web UI.",
+      "renderer": "macula-suite",
+      "service_name": "macula-ui",
+      "service_port": 80,
+      "host_template": "macula.{box_host}",
+      "path": "/",
+      "expected_status": 200,
+      "body_marker": "Macula | Your place for websites",
+      "route_description": "macula-ui-root",
+      "default_backend": false,
+      "image_names": [
+        "macula-ui",
+        "macula-api"
+      ]
+    }
+  ]
+}

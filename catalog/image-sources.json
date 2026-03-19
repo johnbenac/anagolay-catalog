@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "profile": "anagolay",
+  "images": [
+    {
+      "name": "macula-ui",
+      "ref": "ghcr.io/johnbenac/macula/macula-ui:latest",
+      "used_by": [
+        "macula"
+      ]
+    },
+    {
+      "name": "macula-api",
+      "ref": "ghcr.io/johnbenac/macula/macula-api:latest",
+      "used_by": [
+        "macula"
+      ]
+    }
+  ]
+}

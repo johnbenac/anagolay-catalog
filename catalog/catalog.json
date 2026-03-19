@@ -13,7 +13,6 @@
       "app_uid": "anagolay/macula",
       "display_name": "Macula",
       "description": "IPFS-backed media hosting with image transforms and a web UI.",
-      "renderer": "macula-suite",
       "service_name": "macula-ui",
       "service_port": 80,
       "host_template": "macula.{box_host}",
@@ -25,6 +24,28 @@
       "image_names": [
         "macula-ui",
         "macula-api"
+      ],
+      "services": [
+        {
+          "name": "macula-ui",
+          "image": "macula-ui",
+          "port": 80,
+          "command": [],
+          "args": [],
+          "env": {},
+          "storage": null,
+          "health_path": "/"
+        },
+        {
+          "name": "macula-api",
+          "image": "macula-api",
+          "port": 3000,
+          "command": [],
+          "args": [],
+          "env": {},
+          "storage": null,
+          "health_path": "/"
+        }
       ]
     }
   ]

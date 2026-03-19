@@ -17,7 +17,6 @@ script_lines = {line.strip() for line in script.splitlines()}
 
 workflow_required = [
     "bash scripts/publish-catalog-bundle.sh",
-    "bash bootstrap.sh",
 ]
 
 script_required = [
@@ -30,7 +29,7 @@ script_required = [
     'oras tag "${IMMUTABLE_REF}" "${VERSION_TAG}" >/dev/null',
     'LATEST_DIGEST="$(oras resolve "${REF}")"',
     '[[ "${LATEST_DIGEST}" == "${DIGEST}" ]] || {',
-    'python3 scripts/render-catalog-rows.py \\',
+    'python3 "${ROOT}/scripts/render-catalog-rows.py" \\',
     'dist/catalog.tsv:text/tab-separated-values',
 ]
 

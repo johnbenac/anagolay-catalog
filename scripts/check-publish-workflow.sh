@@ -3,15 +3,28 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKFLOW="${ROOT}/.github/workflows/publish-catalog-bundle.yml"
+SCRIPT="${ROOT}/scripts/publish-catalog-bundle.sh"
 
-python3 - <<'PY' "${WORKFLOW}"
+python3 - <<'PY' "${WORKFLOW}" "${SCRIPT}"
 import sys
 from pathlib import Path
 
 workflow = Path(sys.argv[1]).read_text(encoding="utf-8")
-lines = {line.strip() for line in workflow.splitlines()}
-required = [
+script = Path(sys.argv[2]).read_text(encoding="utf-8")
+
+workflow_lines = {line.strip() for line in workflow.splitlines()}
+script_lines = {line.strip() for line in script.splitlines()}
+
+workflow_required = [
+    "bash scripts/publish-catalog-bundle.sh",
     'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:stable)"',
+]
+
+workflow_banned = [
+    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"',
+]
+
+script_required = [
     'IMMUTABLE_TAG="sha-${GITHUB_SHA}-run-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"',
     'VERSION_TAG="main-${GITHUB_SHA::12}"',
     '"${IMMUTABLE_REF}" \\',
@@ -21,26 +34,39 @@ required = [
     'oras tag "${IMMUTABLE_REF}" "${VERSION_TAG}" >/dev/null',
     'LATEST_DIGEST="$(oras resolve "${REF}")"',
     '[[ "${LATEST_DIGEST}" == "${DIGEST}" ]] || {',
-    'python3 scripts/render-catalog-rows.py \\',
+    'python3 "${ROOT}/scripts/render-catalog-rows.py" \\',
     'dist/catalog.tsv:text/tab-separated-values',
 ]
-banned = [
-    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"',
+
+script_banned = [
     'DIGEST="$(oras resolve "${REF}")"',
     'oras tag "${REF}" "${IMMUTABLE_TAG}" >/dev/null',
 ]
 
-missing = [item for item in required if item not in lines]
-unexpected = [item for item in banned if item in lines]
-if missing or unexpected:
-    messages = []
-    if missing:
-        messages.append("missing expected workflow invariants:")
-        messages.extend(f"  - {item}" for item in missing)
-    if unexpected:
-        messages.append("found banned workflow patterns:")
-        messages.extend(f"  - {item}" for item in unexpected)
+messages = []
+
+wf_missing = [item for item in workflow_required if not any(item in line for line in workflow_lines)]
+if wf_missing:
+    messages.append("workflow missing expected lines:")
+    messages.extend(f"  - {item}" for item in wf_missing)
+
+wf_banned = [item for item in workflow_banned if item in workflow_lines]
+if wf_banned:
+    messages.append("workflow has banned patterns:")
+    messages.extend(f"  - {item}" for item in wf_banned)
+
+sc_missing = [item for item in script_required if item not in script_lines]
+if sc_missing:
+    messages.append("publish-catalog-bundle.sh missing expected invariants:")
+    messages.extend(f"  - {item}" for item in sc_missing)
+
+sc_banned = [item for item in script_banned if item in script_lines]
+if sc_banned:
+    messages.append("publish-catalog-bundle.sh has banned patterns:")
+    messages.extend(f"  - {item}" for item in sc_banned)
+
+if messages:
     raise SystemExit("\n".join(messages))
 PY
 
-echo "Workflow publish invariants look correct: ${WORKFLOW}"
+echo "Workflow and publish script invariants look correct"

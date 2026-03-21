@@ -17,11 +17,11 @@ script_lines = {line.strip() for line in script.splitlines()}
 
 workflow_required = [
     "bash scripts/publish-catalog-bundle.sh",
-    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:stable)"',
+    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"',
 ]
 
 workflow_banned = [
-    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"',
+    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:stable)"',
 ]
 
 script_required = [

@@ -22,7 +22,7 @@ jobs:
       - name: Resolve platform contract digest
         run: |
           set -euo pipefail
-          digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"
+          digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:stable)"
           echo "OURBOX_PLATFORM_CONTRACT_DIGEST=${digest}" >> "${GITHUB_ENV}"
       - name: Render catalog bundle
         run: bash scripts/render-catalog-bundle.sh

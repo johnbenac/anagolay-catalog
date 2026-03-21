@@ -11,6 +11,7 @@ from pathlib import Path
 workflow = Path(sys.argv[1]).read_text(encoding="utf-8")
 lines = {line.strip() for line in workflow.splitlines()}
 required = [
+    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:stable)"',
     'IMMUTABLE_TAG="sha-${GITHUB_SHA}-run-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"',
     'VERSION_TAG="main-${GITHUB_SHA::12}"',
     '"${IMMUTABLE_REF}" \\',
@@ -24,6 +25,7 @@ required = [
     'dist/catalog.tsv:text/tab-separated-values',
 ]
 banned = [
+    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"',
     'DIGEST="$(oras resolve "${REF}")"',
     'oras tag "${REF}" "${IMMUTABLE_TAG}" >/dev/null',
 ]

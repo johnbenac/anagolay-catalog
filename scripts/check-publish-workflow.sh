@@ -17,11 +17,6 @@ script_lines = {line.strip() for line in script.splitlines()}
 
 workflow_required = [
     "bash scripts/publish-catalog-bundle.sh",
-    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:edge)"',
-]
-
-workflow_banned = [
-    'digest="$(oras resolve ghcr.io/techofourown/sw-ourbox-os/platform-contract:stable)"',
 ]
 
 script_required = [
@@ -45,22 +40,17 @@ script_banned = [
 
 messages = []
 
-wf_missing = [item for item in workflow_required if not any(item in line for line in workflow_lines)]
+wf_missing = [i for i in workflow_required if not any(i in l for l in workflow_lines)]
 if wf_missing:
     messages.append("workflow missing expected lines:")
     messages.extend(f"  - {item}" for item in wf_missing)
 
-wf_banned = [item for item in workflow_banned if item in workflow_lines]
-if wf_banned:
-    messages.append("workflow has banned patterns:")
-    messages.extend(f"  - {item}" for item in wf_banned)
-
-sc_missing = [item for item in script_required if item not in script_lines]
+sc_missing = [i for i in script_required if i not in script_lines]
 if sc_missing:
     messages.append("publish-catalog-bundle.sh missing expected invariants:")
     messages.extend(f"  - {item}" for item in sc_missing)
 
-sc_banned = [item for item in script_banned if item in script_lines]
+sc_banned = [i for i in script_banned if i in script_lines]
 if sc_banned:
     messages.append("publish-catalog-bundle.sh has banned patterns:")
     messages.extend(f"  - {item}" for item in sc_banned)

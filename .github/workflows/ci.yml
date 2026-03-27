@@ -11,4 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oras-project/setup-oras@v1
+      - run: bash bootstrap.sh
       - run: bash scripts/validate-catalog-repo.sh
